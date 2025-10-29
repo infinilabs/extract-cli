@@ -23,7 +23,7 @@ build:
 	cp target/release/extract-cli ./
 
 clean:
-    rm -r graalvm_jdk
+	yes | rm -r graalvm_jdk
 	cd build_libtika && cargo clean
 	cargo clean
-    $(RM_CMD) $(RM_LIBS)
+	$(RM_CMD) $(RM_LIBS)
