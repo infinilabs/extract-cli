@@ -37,7 +37,7 @@ clean:
 	cd build_libtika && cargo clean
 	cargo clean
 	$(RM_CMD) -f $(RM_LIBS)
-	rm -f pkg
+	rm -rf pkg
 
 test: build
 	./pkg/extract-cli test/hello.pdf test/out
