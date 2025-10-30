@@ -17,7 +17,7 @@ const LIBTIKA_PATH_UNDER_GRADLEW: &str =
     concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBTIKA);
 
 cfg_if::cfg_if! {
-    if #![cfg(target_os = "linux")] {
+    if #[cfg(target_os = "linux")] {
         const LIBJAVA: &str = "libjava.so";
         const LIBJAVA_PATH_UNDER_GRADLEW: &str =
             concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBJAVA);
@@ -94,9 +94,9 @@ fn main() {
      *     5. libawt_headless.so
      */
     println!("Progress: moving shared libraries to project root");
-    std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
+    std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA).unwrap();
     cfg_if::cfg_if! {
-        if #![cfg(target_os = "linux")] {
+        if #[cfg(target_os = "linux")] {
             std::fs::copy(LIBJAVA_PATH_UNDER_GRADLEW, LIBJAVA).unwrap();
             std::fs::copy(LIBJVM_PATH_UNDER_GRADLEW, LIBJVM).unwrap();
             std::fs::copy(LIBAWT_PATH_UNDER_GRADLEW, LIBAWT).unwrap();
@@ -108,18 +108,18 @@ fn main() {
     /*
      * Set Install Name on macOS
      */
-    set_install_name_macos();
+    set_libtika_install_name_macos();
 
     println!("Progress: successfully built and moved libtika");
 }
 
-fn set_install_name_macos() {
+fn set_libtika_install_name_macos() {
     if cfg!(target_os = "macos") {
         println!("Progress: updating libtika Install Name");
         let status = Command::new("install_name_tool")
             .arg("-id")
-            .arg(format!("@rpath/{}", LIBTIKA_PATH))
-            .arg(LIBTIKA_PATH)
+            .arg(format!("@rpath/{}", LIBTIKA))
+            .arg(LIBTIKA)
             .status()
             .expect("Failed to run install_name_tool on the dylib");
         assert!(status.success(), "install_name_tool -id failed");
