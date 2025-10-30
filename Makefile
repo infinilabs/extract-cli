@@ -30,8 +30,3 @@ clean:
 test: build
 	./extract-cli test/hello.pdf test/out
 	rm test/out
-
-uselib:
-	cd use_lib && cargo b
-	find ./use_lib -name 'libtika_native.so' -exec sudo mv {} /usr/lib64 \;
-	./use_lib/target/debug/use_lib ./test/hello.pdf
