@@ -32,12 +32,12 @@ else ifeq ($(UNAME_S),Linux)
 endif
 
 clean:
-	yes | rm -r graalvm_jdk
-	rm gradle-8.10-bin.zip
+	yes | rm -rf graalvm_jdk
+	rm -f gradle-8.10-bin.zip
 	cd build_libtika && cargo clean
 	cargo clean
-	$(RM_CMD) $(RM_LIBS)
-	rm pkg
+	$(RM_CMD) -f $(RM_LIBS)
+	rm -f pkg
 
 test: build
 	./pkg/extract-cli test/hello.pdf test/out
