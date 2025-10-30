@@ -27,3 +27,6 @@ clean:
 	cd build_libtika && cargo clean
 	cargo clean
 	$(RM_CMD) $(RM_LIBS)
+test: build
+	./extract-cli test/hello.pdf test/out
+	rm test/out
