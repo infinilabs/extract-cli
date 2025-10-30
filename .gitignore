@@ -5,4 +5,9 @@ build_libtika/target
 /libtika_native.dylib
 /libtika_native.so
 /libtika_native.dll
+/libjava.so
+/libjvm.so
+/libawt.so
+/libawt_headless.so
 /extract-cli
+pkg

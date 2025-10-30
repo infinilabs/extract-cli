@@ -22,6 +22,11 @@ build:
 	./build_libtika/target/debug/build_libtika
 	cargo build --release
 	cp target/release/extract-cli ./
+	# Packaging
+	mkdir pkg
+	mv extract-cli pkg/
+	mv *.dylib pkg/
+	mv *.so pkg/
 
 clean:
 	yes | rm -r graalvm_jdk
@@ -31,5 +36,5 @@ clean:
 	$(RM_CMD) $(RM_LIBS)
 
 test: build
-	./extract-cli test/hello.pdf test/out
+	./pkg/extract-cli test/hello.pdf test/out
 	rm test/out

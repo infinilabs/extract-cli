@@ -59,6 +59,7 @@ dependencies = [
 name = "build_libtika"
 version = "0.1.0"
 dependencies = [
+ "cfg-if",
  "const_format",
  "flate2",
  "fs_extra",

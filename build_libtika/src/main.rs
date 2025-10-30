@@ -7,40 +7,38 @@ use std::process::Command;
 const GRAALVM_JDK_PATH: &str = "./graalvm_jdk";
 
 #[cfg(target_os = "macos")]
-const LIBTIKA_PATH: &str = "libtika_native.dylib";
+const LIBTIKA: &str = "libtika_native.dylib";
 #[cfg(target_os = "linux")]
-const LIBTIKA_PATH: &str = "libtika_native.so";
+const LIBTIKA: &str = "libtika_native.so";
 #[cfg(target_os = "windows")]
-const LIBTIKA_PATH: &str = "libtika_native.dll";
+const LIBTIKA: &str = "libtika_native.dll";
 
 const LIBTIKA_PATH_UNDER_GRADLEW: &str =
-    concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBTIKA_PATH);
+    concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBTIKA);
+
+cfg_if::cfg_if! {
+    if #![cfg(target_os = "linux")] {
+        const LIBJAVA: &str = "libjava.so";
+        const LIBJAVA_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBJAVA);
+
+        const LIBJVM: &str = "libjvm.so";
+        const LIBJVM_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBJVM);
+
+        const LIBAWT: &str = "libawt.so";
+        const LIBAWT_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBAWT);
+
+        const LIBAWT_HEADLESS: &str = "libawt_headless.so";
+        const LIBAWT_HEADLESS_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBAWT_HEADLESS);
+    }
+}
 
 const TIKA_NATIVE: &str = "./tika-native";
 
 fn main() {
-    /*
-     * Early return
-     */
-    // Is was built and placed in the right place
-    if Path::new(LIBTIKA_PATH).exists() {
-        println!("Progress: libtika was already built and moved");
-        set_install_name_macos();
-        println!("Progress: successfully built and moved libtika");
-        return;
-    }
-    // Is was built, but not placed in the right place
-    //
-    // Move it to the right place and set the install name.
-    if Path::new(LIBTIKA_PATH_UNDER_GRADLEW).exists() {
-        println!("Progress: libtika was already built");
-        println!("Progress: moving libtika to the project root");
-        std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
-        set_install_name_macos();
-        println!("Progress: successfully built and moved libtika");
-        return;
-    }
-
     /*
      * Install GraalVM if not found
      */
@@ -85,11 +83,27 @@ fn main() {
     }
 
     /*
-     * Move the built shared-library
+     * Move the shared-library(s)
+     *
+     * On macOS: we only need 1 libtika_native.dylib
+     * On Linux: we need:
+     *     1. libtika_native.so
+     *     2. libjava.so
+     *     3. libjvm.so
+     *     4. libawt.so
+     *     5. libawt_headless.so
      */
-    println!("Progress: moving the libtika to project root");
+    println!("Progress: moving shared libraries to project root");
     std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
-    println!("Progress: libtika moved");
+    cfg_if::cfg_if! {
+        if #![cfg(target_os = "linux")] {
+            std::fs::copy(LIBJAVA_PATH_UNDER_GRADLEW, LIBJAVA).unwrap();
+            std::fs::copy(LIBJVM_PATH_UNDER_GRADLEW, LIBJVM).unwrap();
+            std::fs::copy(LIBAWT_PATH_UNDER_GRADLEW, LIBAWT).unwrap();
+            std::fs::copy(LIBAWT_HEADLESS_PATH_UNDER_GRADLEW, LIBAWT_HEADLESS).unwrap();
+        }
+    }
+    println!("Progress: libraries moved");
 
     /*
      * Set Install Name on macOS
