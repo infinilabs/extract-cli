@@ -25,14 +25,19 @@ fn main() {
     // Is was built and placed in the right place
     if Path::new(LIBTIKA_PATH).exists() {
         set_install_name_macos();
+        println!("Progress: libtika was already built and moved");
+        println!("Progress: successfully built and moved libtika");
         return;
     }
     // Is was built, but not placed in the right place
     //
     // Move it to the right place and set the install name.
     if Path::new(LIBTIKA_PATH_UNDER_GRADLEW).exists() {
+        println!("Progress: libtika was already built");
+        println!("Progress: moving libtika to the project root");
         std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
         set_install_name_macos();
+        println!("Progress: successfully built and moved libtika");
         return;
     }
 
@@ -55,12 +60,14 @@ fn main() {
     // script, God knows why.
     let gradlew_bin = std::fs::canonicalize(Path::new(TIKA_NATIVE).join(gradlew_filename)).unwrap();
     let graalvm_home = std::fs::canonicalize(graalvm_home).unwrap();
+    let tika_native_canonicalized = std::fs::canonicalize(Path::new(TIKA_NATIVE)).unwrap();
     assert!(gradlew_bin.exists());
     assert!(graalvm_home.exists());
+    assert!(tika_native_canonicalized.exists());
 
     println!("Progress: building libtika");
     let status = Command::new(gradlew_bin)
-        .current_dir(TIKA_NATIVE)
+        .current_dir(tika_native_canonicalized)
         .arg("--no-daemon")
         .arg("nativeCompile")
         .env("JAVA_HOME", graalvm_home)
@@ -80,12 +87,6 @@ fn main() {
     /*
      * Move the built shared-library
      */
-    // let mut child = Command::new("ls")
-    //     .arg("-R")
-    //     .current_dir(TIKA_NATIVE)
-    //     .spawn()
-    //     .unwrap();
-    // let status = child.wait().unwrap();
     println!("Progress: moving the libtika to project root");
     std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
     println!("Progress: libtika moved");
