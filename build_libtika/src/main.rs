@@ -67,6 +67,7 @@ fn main() {
     /*
      * Move the built shared-library
      */
+    assert!(Path::new(LIBTIKA_PATH_UNDER_GRADLEW).exists());
     std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
 
     /*
