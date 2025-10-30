@@ -21,8 +21,8 @@ jobs:
 
     - name: show pkg
       shell: bash
-      run: tree pkg
+      run: ls -al pkg
 
-    # - name: Run tests
-    #   shell: bash
-    #   run: make test
+    - name: Run tests
+      shell: bash
+      run: make test
