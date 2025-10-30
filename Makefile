@@ -25,8 +25,11 @@ build:
 	# Packaging
 	mkdir pkg
 	mv extract-cli pkg/
+ifeq ($(UNAME_S),Darwin)
 	mv *.dylib pkg/
+else ifeq ($(UNAME_S),Linux)
 	mv *.so pkg/
+endif
 
 clean:
 	yes | rm -r graalvm_jdk
@@ -34,6 +37,7 @@ clean:
 	cd build_libtika && cargo clean
 	cargo clean
 	$(RM_CMD) $(RM_LIBS)
+	rm pkg
 
 test: build
 	./pkg/extract-cli test/hello.pdf test/out
