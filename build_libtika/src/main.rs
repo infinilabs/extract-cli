@@ -68,6 +68,8 @@ fn main() {
      * Move the built shared-library
      */
     let mut child = Command::new(which::which("tree").unwrap())
+        .arg("/F")
+        .arg("/A")
         .current_dir(TIKA_NATIVE)
         .spawn()
         .unwrap();
