@@ -8,8 +8,9 @@ jobs:
     strategy:
       matrix:
         # platform: [ubuntu-latest, windows-latest, macos-latest]
-        # platform: [ubuntu-latest]
-        platform: [windows-latest]
+        # platform: [macos-latest]
+        platform: [ubuntu-latest]
+        # platform: [windows-latest]
 
     runs-on: ${{ matrix.platform }} 
 
