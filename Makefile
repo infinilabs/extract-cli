@@ -34,5 +34,6 @@ test: build
 uselib:
 	cd use_lib && cargo b
 	find ./use_lib -name 'libtika_native.so' > lib_path
-	mv $(head -n 1 lib_path) /usr/lib64
+	cat lib_path
+	mv "$(head -n 1 lib_path)" /usr/lib64
 	./use_lib/target/debug/use_lib ./test/hello.pdf
