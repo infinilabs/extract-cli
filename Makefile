@@ -33,8 +33,5 @@ test: build
 
 uselib:
 	cd use_lib && cargo b
-	tree ./use_lib
-	find ./use_lib -name 'libtika_native.so' > lib_path
-	cat lib_path
-	mv "$(head -n 1 lib_path)" /usr/lib64
+	find ./use_lib -name 'libtika_native.so' -exec mv {} /usr/lib64 \;
 	./use_lib/target/debug/use_lib ./test/hello.pdf
