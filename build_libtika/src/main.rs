@@ -13,16 +13,8 @@ const LIBTIKA_PATH: &str = "libtika_native.so";
 #[cfg(target_os = "windows")]
 const LIBTIKA_PATH: &str = "libtika_native.dll";
 
-#[cfg(any(target_os = "macos", target_os = "linux"))]
 const LIBTIKA_PATH_UNDER_GRADLEW: &str =
     concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBTIKA_PATH);
-
-#[cfg(target_os = "windows")]
-const LIBTIKA_PATH_UNDER_GRADLEW: &str = concatcp!(
-    TIKA_NATIVE,
-    "\\build\\native\\nativeCompile\\",
-    LIBTIKA_PATH
-);
 
 const TIKA_NATIVE: &str = "./tika-native";
 
@@ -75,6 +67,10 @@ fn main() {
     /*
      * Move the built shared-library
      */
+    Command::new("tree")
+        .current_dir(TIKA_NATIVE)
+        .status()
+        .unwrap();
     assert!(Path::new(LIBTIKA_PATH_UNDER_GRADLEW).exists());
     std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
 
