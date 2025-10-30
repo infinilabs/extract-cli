@@ -11,6 +11,10 @@ fn main() {
     println!("cargo:rustc-link-search=native={}", manifest_dir);
     println!("cargo:rustc-link-lib=dylib={}", LIBTIKA_PATH);
 
+    if cfg!(target_os = "linux") {
+        println!("cargo:rustc-link-lib=dylib=awt");
+    }
+
     /*
      * Add a rpath to the directory that contains the binary
      */
