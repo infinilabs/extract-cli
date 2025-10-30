@@ -56,36 +56,49 @@ fn main() {
     let gradlew_bin = std::fs::canonicalize(Path::new(TIKA_NATIVE).join(gradlew_filename)).unwrap();
     let graalvm_home = std::fs::canonicalize(graalvm_home).unwrap();
 
+    println!("Progress: building libtika");
     let status = Command::new(gradlew_bin)
         .current_dir(TIKA_NATIVE)
         .arg("--no-daemon")
         .arg("nativeCompile")
         .env("JAVA_HOME", graalvm_home)
         .status()
-        .unwrap_or_else(|e| panic!("Failed to build tika-native: {:?}", e));
-    println!("DBG: gradlew_bin exit status {:?}", status);
+        .unwrap_or_else(|e| panic!("Failed to spawn child process [gradlew]: {:?}", e));
+    if status.success() {
+        assert!(Path::new(LIBTIKA_PATH_UNDER_GRADLEW).exists());
+        println!("Progress: libtika built successfully");
+    } else {
+        println!(
+            "Progress: failed to build libtika, gradlew status [{:?}] check the logs above. Aborting",
+            status
+        );
+        std::process::exit(1);
+    }
 
     /*
      * Move the built shared-library
      */
-    let mut child = Command::new("ls")
-        .arg("-R")
-        .current_dir(TIKA_NATIVE)
-        .spawn()
-        .unwrap();
-    let status = child.wait().unwrap();
-    println!("DBG: tree exit status {:?}", status);
-    assert!(Path::new(LIBTIKA_PATH_UNDER_GRADLEW).exists());
+    // let mut child = Command::new("ls")
+    //     .arg("-R")
+    //     .current_dir(TIKA_NATIVE)
+    //     .spawn()
+    //     .unwrap();
+    // let status = child.wait().unwrap();
+    println!("Progress: moving the libtika to project root");
     std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
+    println!("Progress: libtika moved");
 
     /*
      * Set Install Name on macOS
      */
     set_install_name_macos();
+
+    println!("Progress: successfully built and moved libtika");
 }
 
 fn set_install_name_macos() {
     if cfg!(target_os = "macos") {
+        println!("Progress: updating libtika Install Name");
         let status = Command::new("install_name_tool")
             .arg("-id")
             .arg(format!("@rpath/{}", LIBTIKA_PATH))
@@ -93,6 +106,7 @@ fn set_install_name_macos() {
             .status()
             .expect("Failed to run install_name_tool on the dylib");
         assert!(status.success(), "install_name_tool -id failed");
+        println!("Progress: libtika Install Name updated");
     }
 }
 
@@ -136,6 +150,7 @@ fn graalvm_install_help_msg() -> String {
 }
 
 pub fn install_graalvm_ce(install_dir: &PathBuf) -> PathBuf {
+    println!("Progress: downloading GraalVM JDK");
     let (base_url, archive_ext, main_dir) = if cfg!(target_os = "windows") {
         let url = if cfg!(target_arch = "x86_64") {
             "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.1/graalvm-community-jdk-23.0.1_windows-x64_bin.zip"
@@ -200,10 +215,14 @@ pub fn install_graalvm_ce(install_dir: &PathBuf) -> PathBuf {
             //out.write_all(&buffer).unwrap();
             fs::write(&archive_path, &buffer).expect("Failed to write archive file");
         }
+        println!("Progress: GraalVM JDK downloaded");
 
         // Extract the archive file
         if archive_path.exists() {
-            println!("Extracting GraalVM JDK archive {}", archive_path.display());
+            println!(
+                "Progress: extracting the GraalVM JDK at [{}]",
+                archive_path.display()
+            );
 
             if cfg!(target_os = "windows") {
                 let archive_file = fs::File::open(&archive_path).unwrap();
@@ -232,6 +251,8 @@ pub fn install_graalvm_ce(install_dir: &PathBuf) -> PathBuf {
                 let mut archive = tar::Archive::new(tar);
                 archive.unpack(install_dir).unwrap();
             }
+
+            println!("Progress: GraalVM JDK extracted");
         } else {
             panic!("Failed to download GraalVM JDK from {}", base_url);
         }
