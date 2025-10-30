@@ -67,7 +67,7 @@ fn main() {
     /*
      * Move the built shared-library
      */
-    Command::new("tree")
+    Command::new(which::which("tree").unwrap())
         .current_dir(TIKA_NATIVE)
         .spawn()
         .unwrap();
