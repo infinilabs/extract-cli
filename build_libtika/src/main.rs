@@ -69,7 +69,7 @@ fn main() {
      */
     Command::new("tree")
         .current_dir(TIKA_NATIVE)
-        .status()
+        .spawn()
         .unwrap();
     assert!(Path::new(LIBTIKA_PATH_UNDER_GRADLEW).exists());
     std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
