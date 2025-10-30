@@ -55,6 +55,8 @@ fn main() {
     // script, God knows why.
     let gradlew_bin = std::fs::canonicalize(Path::new(TIKA_NATIVE).join(gradlew_filename)).unwrap();
     let graalvm_home = std::fs::canonicalize(graalvm_home).unwrap();
+    assert!(gradlew_bin.exists());
+    assert!(graalvm_home.exists());
 
     println!("Progress: building libtika");
     let status = Command::new(gradlew_bin)
@@ -69,7 +71,7 @@ fn main() {
         println!("Progress: libtika built successfully");
     } else {
         println!(
-            "Progress: failed to build libtika, gradlew status [{:?}] check the logs above. Aborting",
+            "Progress: failed to build libtika, gradlew status [{:?}] check the error logs above. Aborting",
             status
         );
         std::process::exit(1);
