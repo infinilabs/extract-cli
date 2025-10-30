@@ -31,6 +31,10 @@ fn main() {
     loop {
         match text_reader.read(&mut buf) {
             Ok(n_read) => {
+                if n_read == 0 {
+                    break;
+                }
+
                 output_file.write_all(&buf[..n_read]).unwrap_or_else(|e| {
                     eprintln!("Error: I/O error, {}", e);
                     std::process::exit(1);
