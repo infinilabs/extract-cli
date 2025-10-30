@@ -56,20 +56,20 @@ fn main() {
     let gradlew_bin = std::fs::canonicalize(Path::new(TIKA_NATIVE).join(gradlew_filename)).unwrap();
     let graalvm_home = std::fs::canonicalize(graalvm_home).unwrap();
 
-    Command::new(gradlew_bin)
+    let status = Command::new(gradlew_bin)
         .current_dir(TIKA_NATIVE)
         .arg("--no-daemon")
         .arg("nativeCompile")
         .env("JAVA_HOME", graalvm_home)
         .status()
         .unwrap_or_else(|e| panic!("Failed to build tika-native: {:?}", e));
+    println!("DBG: gradlew_bin exit status {:?}", status);
 
     /*
      * Move the built shared-library
      */
-    let mut child = Command::new(which::which("tree").unwrap())
-        .arg("/F")
-        .arg("/A")
+    let mut child = Command::new("ls")
+        .arg("-R")
         .current_dir(TIKA_NATIVE)
         .spawn()
         .unwrap();
