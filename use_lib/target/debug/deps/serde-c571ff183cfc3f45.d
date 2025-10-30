@@ -1,0 +1,14 @@
+/Users/steve/Documents/workspace/INFINI/extract-cli/use_lib/target/debug/deps/serde-c571ff183cfc3f45.d: /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/steve/Documents/workspace/INFINI/extract-cli/use_lib/target/debug/build/serde-afe06ec8f2013938/out/private.rs
+
+/Users/steve/Documents/workspace/INFINI/extract-cli/use_lib/target/debug/deps/libserde-c571ff183cfc3f45.rlib: /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/steve/Documents/workspace/INFINI/extract-cli/use_lib/target/debug/build/serde-afe06ec8f2013938/out/private.rs
+
+/Users/steve/Documents/workspace/INFINI/extract-cli/use_lib/target/debug/deps/libserde-c571ff183cfc3f45.rmeta: /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/steve/Documents/workspace/INFINI/extract-cli/use_lib/target/debug/build/serde-afe06ec8f2013938/out/private.rs
+
+/Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/Users/steve/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/Users/steve/Documents/workspace/INFINI/extract-cli/use_lib/target/debug/build/serde-afe06ec8f2013938/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/steve/Documents/workspace/INFINI/extract-cli/use_lib/target/debug/build/serde-afe06ec8f2013938/out

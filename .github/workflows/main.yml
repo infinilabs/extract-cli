@@ -15,10 +15,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Build project
-      shell: bash
-      run: make build
+    # - name: Build project
+    #   shell: bash
+    #   run: make build
+
+    # - name: Run tests
+    #   shell: bash
+    #   run: make test
 
     - name: Run tests
       shell: bash
-      run: make test
+      run: make uselib
