@@ -24,8 +24,8 @@ fn main() {
      */
     // Is was built and placed in the right place
     if Path::new(LIBTIKA_PATH).exists() {
-        set_install_name_macos();
         println!("Progress: libtika was already built and moved");
+        set_install_name_macos();
         println!("Progress: successfully built and moved libtika");
         return;
     }
@@ -90,6 +90,16 @@ fn main() {
     println!("Progress: moving the libtika to project root");
     std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
     println!("Progress: libtika moved");
+
+    if cfg!(target_os = "linux") {
+        println!("Progress: moving the libawt to project root");
+        std::fs::copy(
+            "./tika-native/build/native/nativeCompile/libawt.so",
+            "libawt.so",
+        )
+        .unwrap();
+        println!("Progress: libawt moved");
+    }
 
     /*
      * Set Install Name on macOS
