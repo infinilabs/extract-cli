@@ -1,0 +1,21 @@
+name: CI
+
+on:
+	pull_request:
+
+jobs:
+	test:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.platform }} 
+
+    steps:
+		- uses: actions/checkout@v4
+
+    - name: Build project
+      run: make build
+
+    - name: Run tests
+      run: make test
