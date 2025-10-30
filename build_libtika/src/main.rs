@@ -71,7 +71,8 @@ fn main() {
         .current_dir(TIKA_NATIVE)
         .spawn()
         .unwrap();
-    child.wait().unwrap();
+    let status = child.wait().unwrap();
+    println!("DBG: tree exit status {:?}", status);
     assert!(Path::new(LIBTIKA_PATH_UNDER_GRADLEW).exists());
     std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
 
