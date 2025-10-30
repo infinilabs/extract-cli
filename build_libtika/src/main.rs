@@ -7,35 +7,38 @@ use std::process::Command;
 const GRAALVM_JDK_PATH: &str = "./graalvm_jdk";
 
 #[cfg(target_os = "macos")]
-const LIBTIKA_PATH: &str = "libtika_native.dylib";
+const LIBTIKA: &str = "libtika_native.dylib";
 #[cfg(target_os = "linux")]
-const LIBTIKA_PATH: &str = "libtika_native.so";
+const LIBTIKA: &str = "libtika_native.so";
 #[cfg(target_os = "windows")]
-const LIBTIKA_PATH: &str = "libtika_native.dll";
+const LIBTIKA: &str = "libtika_native.dll";
 
 const LIBTIKA_PATH_UNDER_GRADLEW: &str =
-    concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBTIKA_PATH);
+    concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBTIKA);
+
+cfg_if::cfg_if! {
+    if #[cfg(target_os = "linux")] {
+        const LIBJAVA: &str = "libjava.so";
+        const LIBJAVA_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBJAVA);
+
+        const LIBJVM: &str = "libjvm.so";
+        const LIBJVM_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBJVM);
+
+        const LIBAWT: &str = "libawt.so";
+        const LIBAWT_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBAWT);
+
+        const LIBAWT_HEADLESS: &str = "libawt_headless.so";
+        const LIBAWT_HEADLESS_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBAWT_HEADLESS);
+    }
+}
 
 const TIKA_NATIVE: &str = "./tika-native";
 
 fn main() {
-    /*
-     * Early return
-     */
-    // Is was built and placed in the right place
-    if Path::new(LIBTIKA_PATH).exists() {
-        set_install_name_macos();
-        return;
-    }
-    // Is was built, but not placed in the right place
-    //
-    // Move it to the right place and set the install name.
-    if Path::new(LIBTIKA_PATH_UNDER_GRADLEW).exists() {
-        std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
-        set_install_name_macos();
-        return;
-    }
-
     /*
      * Install GraalVM if not found
      */
@@ -55,35 +58,72 @@ fn main() {
     // script, God knows why.
     let gradlew_bin = std::fs::canonicalize(Path::new(TIKA_NATIVE).join(gradlew_filename)).unwrap();
     let graalvm_home = std::fs::canonicalize(graalvm_home).unwrap();
+    let tika_native_canonicalized = std::fs::canonicalize(Path::new(TIKA_NATIVE)).unwrap();
+    assert!(gradlew_bin.exists());
+    assert!(graalvm_home.exists());
+    assert!(tika_native_canonicalized.exists());
 
-    Command::new(gradlew_bin)
-        .current_dir(TIKA_NATIVE)
+    println!("Progress: building libtika");
+    let status = Command::new(gradlew_bin)
+        .current_dir(tika_native_canonicalized)
         .arg("--no-daemon")
         .arg("nativeCompile")
         .env("JAVA_HOME", graalvm_home)
         .status()
-        .unwrap_or_else(|e| panic!("Failed to build tika-native: {:?}", e));
+        .unwrap_or_else(|e| panic!("Failed to spawn child process [gradlew]: {:?}", e));
+    if status.success() {
+        assert!(Path::new(LIBTIKA_PATH_UNDER_GRADLEW).exists());
+        println!("Progress: libtika built successfully");
+    } else {
+        println!(
+            "Progress: failed to build libtika, gradlew status [{:?}] check the error logs above. Aborting",
+            status
+        );
+        std::process::exit(1);
+    }
 
     /*
-     * Move the built shared-library
+     * Move the shared-library(s)
+     *
+     * On macOS: we only need 1 libtika_native.dylib
+     * On Linux: we need:
+     *     1. libtika_native.so
+     *     2. libjava.so
+     *     3. libjvm.so
+     *     4. libawt.so
+     *     5. libawt_headless.so
      */
-    std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
+    println!("Progress: moving shared libraries to project root");
+    std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA).unwrap();
+    cfg_if::cfg_if! {
+        if #[cfg(target_os = "linux")] {
+            std::fs::copy(LIBJAVA_PATH_UNDER_GRADLEW, LIBJAVA).unwrap();
+            std::fs::copy(LIBJVM_PATH_UNDER_GRADLEW, LIBJVM).unwrap();
+            std::fs::copy(LIBAWT_PATH_UNDER_GRADLEW, LIBAWT).unwrap();
+            std::fs::copy(LIBAWT_HEADLESS_PATH_UNDER_GRADLEW, LIBAWT_HEADLESS).unwrap();
+        }
+    }
+    println!("Progress: libraries moved");
 
     /*
      * Set Install Name on macOS
      */
-    set_install_name_macos();
+    set_libtika_install_name_macos();
+
+    println!("Progress: successfully built and moved libtika");
 }
 
-fn set_install_name_macos() {
+fn set_libtika_install_name_macos() {
     if cfg!(target_os = "macos") {
+        println!("Progress: updating libtika Install Name");
         let status = Command::new("install_name_tool")
             .arg("-id")
-            .arg(format!("@rpath/{}", LIBTIKA_PATH))
-            .arg(LIBTIKA_PATH)
+            .arg(format!("@rpath/{}", LIBTIKA))
+            .arg(LIBTIKA)
             .status()
             .expect("Failed to run install_name_tool on the dylib");
         assert!(status.success(), "install_name_tool -id failed");
+        println!("Progress: libtika Install Name updated");
     }
 }
 
@@ -127,6 +167,7 @@ fn graalvm_install_help_msg() -> String {
 }
 
 pub fn install_graalvm_ce(install_dir: &PathBuf) -> PathBuf {
+    println!("Progress: downloading GraalVM JDK");
     let (base_url, archive_ext, main_dir) = if cfg!(target_os = "windows") {
         let url = if cfg!(target_arch = "x86_64") {
             "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.1/graalvm-community-jdk-23.0.1_windows-x64_bin.zip"
@@ -191,10 +232,14 @@ pub fn install_graalvm_ce(install_dir: &PathBuf) -> PathBuf {
             //out.write_all(&buffer).unwrap();
             fs::write(&archive_path, &buffer).expect("Failed to write archive file");
         }
+        println!("Progress: GraalVM JDK downloaded");
 
         // Extract the archive file
         if archive_path.exists() {
-            println!("Extracting GraalVM JDK archive {}", archive_path.display());
+            println!(
+                "Progress: extracting the GraalVM JDK at [{}]",
+                archive_path.display()
+            );
 
             if cfg!(target_os = "windows") {
                 let archive_file = fs::File::open(&archive_path).unwrap();
@@ -223,6 +268,8 @@ pub fn install_graalvm_ce(install_dir: &PathBuf) -> PathBuf {
                 let mut archive = tar::Archive::new(tar);
                 archive.unpack(install_dir).unwrap();
             }
+
+            println!("Progress: GraalVM JDK extracted");
         } else {
             panic!("Failed to download GraalVM JDK from {}", base_url);
         }

@@ -9,14 +9,17 @@ fn main() {
      */
     let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
     println!("cargo:rustc-link-search=native={}", manifest_dir);
-    println!("cargo:rustc-link-lib=dylib={}", LIBTIKA_PATH);
-
-    /*
-     * Add a rpath to the directory that contains the binary
-     */
-    if cfg!(target_os = "macos") {
-        println!("cargo:rustc-link-arg=-Wl,-rpath,@loader_path");
-    } else if cfg!(target_os = "linux") {
+    
+    // Force dynamic linking after static libraries
+    if cfg!(target_os = "linux") {
+        println!("cargo:rustc-link-arg=-Wl,-Bdynamic");
+        println!("cargo:rustc-link-arg=-l{}", LIBTIKA_PATH);
         println!("cargo:rustc-link-arg=-Wl,-rpath,$ORIGIN");
+    } else if cfg!(target_os = "macos") {
+        println!("cargo:rustc-link-arg=-Wl,-dylib");
+        println!("cargo:rustc-link-arg=-l{}", LIBTIKA_PATH);
+        println!("cargo:rustc-link-arg=-Wl,-rpath,@loader_path");
+    } else {
+        println!("cargo:rustc-link-lib=dylib={}", LIBTIKA_PATH);
     }
 }

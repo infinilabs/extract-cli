@@ -18,15 +18,27 @@ endif
 
 build:
 	cd build_libtika && cargo build
+	wget https://services.gradle.org/distributions/gradle-8.10-bin.zip
 	./build_libtika/target/debug/build_libtika
 	cargo build --release
 	cp target/release/extract-cli ./
+	# Packaging
+	mkdir pkg
+	mv extract-cli pkg/
+ifeq ($(UNAME_S),Darwin)
+	mv *.dylib pkg/
+else ifeq ($(UNAME_S),Linux)
+	mv *.so pkg/
+endif
 
 clean:
-	yes | rm -r graalvm_jdk
+	yes | rm -rf graalvm_jdk
+	rm -f gradle-8.10-bin.zip
 	cd build_libtika && cargo clean
 	cargo clean
-	$(RM_CMD) $(RM_LIBS)
+	$(RM_CMD) -f $(RM_LIBS)
+	rm -rf pkg
+
 test: build
-	./extract-cli test/hello.pdf test/out
+	./pkg/extract-cli test/hello.pdf test/out
 	rm test/out
