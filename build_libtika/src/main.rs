@@ -67,10 +67,11 @@ fn main() {
     /*
      * Move the built shared-library
      */
-    Command::new(which::which("tree").unwrap())
+    let child = Command::new(which::which("tree").unwrap())
         .current_dir(TIKA_NATIVE)
         .spawn()
         .unwrap();
+    child.wait().unwrap();
     assert!(Path::new(LIBTIKA_PATH_UNDER_GRADLEW).exists());
     std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
 
