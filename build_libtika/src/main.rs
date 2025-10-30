@@ -91,16 +91,6 @@ fn main() {
     std::fs::copy(LIBTIKA_PATH_UNDER_GRADLEW, LIBTIKA_PATH).unwrap();
     println!("Progress: libtika moved");
 
-    if cfg!(target_os = "linux") {
-        println!("Progress: moving the libawt to project root");
-        std::fs::copy(
-            "./tika-native/build/native/nativeCompile/libawt.so",
-            "libawt.so",
-        )
-        .unwrap();
-        println!("Progress: libawt moved");
-    }
-
     /*
      * Set Install Name on macOS
      */
