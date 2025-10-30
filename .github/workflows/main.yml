@@ -19,6 +19,10 @@ jobs:
       shell: bash
       run: make build
 
+    - name: show pkg
+      shell: bash
+      run: tree pkg
+
     # - name: Run tests
     #   shell: bash
     #   run: make test
