@@ -4,24 +4,42 @@ on:
   pull_request:
 
 jobs:
-  test:
-    strategy:
-      matrix:
-        platform: [windows-latest, ubuntu-latest, macos-latest]
+  # native-build:
+  #   strategy:
+  #     matrix:
+  #       platform: [windows-latest, ubuntu-latest, macos-latest]
 
-    runs-on: ${{ matrix.platform }} 
+  #   runs-on: ${{ matrix.platform }} 
+
+  #   steps:
+  #   - uses: actions/checkout@v4
+
+  #   - name: Build project
+  #     shell: bash
+  #     run: make build
+
+  #   - name: show pkg
+  #     shell: bash
+  #     run: ls -al pkg
+
+  #   - name: Run tests
+  #     shell: bash
+  #     run: make test
+      
+  native-build-run-docker:
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Build project
-      shell: bash
       run: make build
+    
+    - name: move hello.pef to pkg
+      run: cp test_dir/hello.pdf pkg/
 
     - name: show pkg
       shell: bash
       run: ls -al pkg
-
-    - name: Run tests
-      shell: bash
-      run: make test
+    
+    # Here, Gemini, run docker build
