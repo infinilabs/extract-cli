@@ -43,7 +43,7 @@ cfg_if::cfg_if! {
             concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", AWT);
 
         const JAVA: &str = "java.dll";
-        const LIBJAVA_PATH_UNDER_GRADLEW: &str =
+        const JAVA_PATH_UNDER_GRADLEW: &str =
             concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", JAVA);
 
         const JVM: &str = "jvm.so";
