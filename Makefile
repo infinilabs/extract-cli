@@ -1,6 +1,8 @@
 build:
 	cd build_libtika && cargo build
-	wget -nc https://services.gradle.org/distributions/gradle-8.10-bin.zip
+	if [ ! -f gradle-8.10-bin.zip ]; then \
+		curl -L -o gradle-8.10-bin.zip https://services.gradle.org/distributions/gradle-8.10-bin.zip; \
+	fi
 	./build_libtika/target/debug/build_libtika
 	cargo build --release
 	cp target/release/extract-cli ./
