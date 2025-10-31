@@ -35,11 +35,15 @@ jobs:
     - name: Build project
       run: make build
     
-    - name: move hello.pef to pkg
+    - name: move hello.pdf to pkg
       run: cp test_dir/hello.pdf pkg/
 
     - name: show pkg
       shell: bash
       run: ls -al pkg
     
-    # Here, Gemini, run docker build
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag extract-cli-test
+
+    - name: Run the container
+      run: docker run extract-cli-test
