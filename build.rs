@@ -13,7 +13,7 @@ fn main() {
     // Force dynamic linking after static libraries
     if cfg!(target_os = "linux") {
         println!("cargo:rustc-link-arg=-Wl,-Bdynamic");
-        println!("cargo:rustc-link-arg=dylib={}", LIBTIKA_PATH);
+        println!("cargo:rustc-link-lib=dylib={}", LIBTIKA_PATH);
         println!("cargo:rustc-link-arg=-Wl,-rpath,$ORIGIN");
     } else if cfg!(target_os = "macos") {
         println!("cargo:rustc-link-lib=dylib={}", LIBTIKA_PATH);
