@@ -38,5 +38,5 @@ clean:
 
 
 test:
-	./pkg/extract-cli test_dir/hello.pdf test_dir/out
+	./pkg/extract-cli test_dir/hello.pdf > test_dir/out
 	rm test_dir/out
