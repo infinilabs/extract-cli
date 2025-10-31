@@ -42,8 +42,8 @@ fn main() {
     /*
      * Install GraalVM if not found
      */
-    // let graalvm_home = install_graalvm_ce(&GRAALVM_JDK_PATH.into());
-    // assert!(graalvm_home.exists());
+    let graalvm_home = install_graalvm_ce(&GRAALVM_JDK_PATH.into());
+    assert!(graalvm_home.exists());
 
     /*
      * Build the native shared library
