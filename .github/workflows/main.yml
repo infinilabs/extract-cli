@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  native-build:
     strategy:
       matrix:
         platform: [windows-latest, ubuntu-latest, macos-latest]
@@ -25,3 +25,25 @@ jobs:
     - name: Run tests
       shell: bash
       run: make test
+      
+  native-build-run-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build project
+      run: make build
+    
+    - name: move hello.pdf to pkg
+      run: cp test_dir/hello.pdf pkg/
+
+    - name: show pkg
+      shell: bash
+      run: ls -al pkg
+    
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag extract-cli-test
+
+    - name: Run the container
+      run: docker run extract-cli-test
