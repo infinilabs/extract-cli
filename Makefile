@@ -1,34 +1,31 @@
-RM_CMD = rm -f
-RM_LIBS =
-
 ifeq ($(OS),Windows_NT)
-  RM_CMD = del
-  RM_LIBS = libtika_native.dll
+	PLATFORM := windows
 else
-  UNAME_S := $(shell uname -s)
-  ifeq ($(UNAME_S),Darwin)
-    RM_LIBS = libtika_native.dylib libtika_native.so
-  else ifeq ($(UNAME_S),Linux)
-    RM_LIBS = libtika_native.so
-  else
-    RM_LIBS = libtika_native.dylib libtika_native.so libtika_native.dll
-  endif
+	uname := $(shell uname)
+	ifeq ($(uname),Darwin)
+		PLATFORM := macos
+	else ifeq ($(uname),Linux)
+		PLATFORM := linux
+	endif
 endif
-
 
 build:
 	cd build_libtika && cargo build
-	wget https://services.gradle.org/distributions/gradle-8.10-bin.zip
+	if [ ! -f gradle-8.10-bin.zip ]; then curl -L -o gradle-8.10-bin.zip https://services.gradle.org/distributions/gradle-8.10-bin.zip; fi
 	./build_libtika/target/debug/build_libtika
 	cargo build --release
 	cp target/release/extract-cli ./
 	# Packaging
 	mkdir pkg
+ifeq ($(PLATFORM),macos)
 	mv extract-cli pkg/
-ifeq ($(UNAME_S),Darwin)
 	mv *.dylib pkg/
-else ifeq ($(UNAME_S),Linux)
+else ifeq ($(PLATFORM),linux)
+	mv extract-cli pkg/
 	mv *.so pkg/
+else ifeq ($(PLATFORM),windows)
+	mv extract-cli.exe pkg/
+	mv *.dll pkg
 endif
 
 clean:
@@ -36,9 +33,10 @@ clean:
 	rm -f gradle-8.10-bin.zip
 	cd build_libtika && cargo clean
 	cargo clean
-	$(RM_CMD) -f $(RM_LIBS)
 	rm -rf pkg
+	rm -f libtika_native.lib # On needed on Windows
 
-test: build
-	./pkg/extract-cli test/hello.pdf test/out
-	rm test/out
+
+test:
+	./pkg/extract-cli test_dir/hello.pdf test_dir/out
+	rm test_dir/out

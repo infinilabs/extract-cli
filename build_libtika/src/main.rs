@@ -33,6 +33,22 @@ cfg_if::cfg_if! {
         const LIBAWT_HEADLESS: &str = "libawt_headless.so";
         const LIBAWT_HEADLESS_PATH_UNDER_GRADLEW: &str =
             concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBAWT_HEADLESS);
+    } else if #[cfg(target_os = "windows")] {
+        const LIBTIKA_LIB: &str = "libtika_native.lib";
+        const LIBTIKA_LIB_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBTIKA_LIB);
+
+        const AWT: &str = "awt.dll";
+        const AWT_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", AWT);
+
+        const JAVA: &str = "java.dll";
+        const JAVA_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", JAVA);
+
+        const JVM: &str = "jvm.dll";
+        const JVM_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", JVM);
     }
 }
 
@@ -56,9 +72,9 @@ fn main() {
 
     // We need to canonicalize these 2 paths before passing them to the Gradlew
     // script, God knows why.
-    let gradlew_bin = std::fs::canonicalize(Path::new(TIKA_NATIVE).join(gradlew_filename)).unwrap();
-    let graalvm_home = std::fs::canonicalize(graalvm_home).unwrap();
-    let tika_native_canonicalized = std::fs::canonicalize(Path::new(TIKA_NATIVE)).unwrap();
+    let gradlew_bin = dunce::canonicalize(Path::new(TIKA_NATIVE).join(gradlew_filename)).unwrap();
+    let graalvm_home = dunce::canonicalize(graalvm_home).unwrap();
+    let tika_native_canonicalized = dunce::canonicalize(Path::new(TIKA_NATIVE)).unwrap();
     assert!(gradlew_bin.exists());
     assert!(graalvm_home.exists());
     assert!(tika_native_canonicalized.exists());
@@ -101,6 +117,13 @@ fn main() {
             std::fs::copy(LIBJVM_PATH_UNDER_GRADLEW, LIBJVM).unwrap();
             std::fs::copy(LIBAWT_PATH_UNDER_GRADLEW, LIBAWT).unwrap();
             std::fs::copy(LIBAWT_HEADLESS_PATH_UNDER_GRADLEW, LIBAWT_HEADLESS).unwrap();
+        } else if #[cfg(target_os = "windows")] {
+            std::fs::copy(JAVA_PATH_UNDER_GRADLEW, JAVA).unwrap();
+            std::fs::copy(JVM_PATH_UNDER_GRADLEW, JVM).unwrap();
+            std::fs::copy(AWT_PATH_UNDER_GRADLEW, AWT).unwrap();
+
+            // Linker needs this on MSVC
+            std::fs::copy(LIBTIKA_LIB_PATH_UNDER_GRADLEW, LIBTIKA_LIB).unwrap();
         }
     }
     println!("Progress: libraries moved");
