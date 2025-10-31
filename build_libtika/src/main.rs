@@ -56,9 +56,9 @@ fn main() {
 
     // We need to canonicalize these 2 paths before passing them to the Gradlew
     // script, God knows why.
-    let gradlew_bin = std::fs::canonicalize(Path::new(TIKA_NATIVE).join(gradlew_filename)).unwrap();
-    let graalvm_home = std::fs::canonicalize(graalvm_home).unwrap();
-    let tika_native_canonicalized = std::fs::canonicalize(Path::new(TIKA_NATIVE)).unwrap();
+    let gradlew_bin = dunce::canonicalize(Path::new(TIKA_NATIVE).join(gradlew_filename)).unwrap();
+    let graalvm_home = dunce::canonicalize(graalvm_home).unwrap();
+    let tika_native_canonicalized = dunce::canonicalize(Path::new(TIKA_NATIVE)).unwrap();
     assert!(gradlew_bin.exists());
     assert!(graalvm_home.exists());
     assert!(tika_native_canonicalized.exists());
