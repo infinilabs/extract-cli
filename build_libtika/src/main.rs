@@ -42,8 +42,8 @@ fn main() {
     /*
      * Install GraalVM if not found
      */
-    let graalvm_home = install_graalvm_ce(&GRAALVM_JDK_PATH.into());
-    assert!(graalvm_home.exists());
+    // let graalvm_home = install_graalvm_ce(&GRAALVM_JDK_PATH.into());
+    // assert!(graalvm_home.exists());
 
     /*
      * Build the native shared library
@@ -62,6 +62,10 @@ fn main() {
     assert!(gradlew_bin.exists());
     assert!(graalvm_home.exists());
     assert!(tika_native_canonicalized.exists());
+
+    println!("DBG: {:?}", gradlew_bin);
+    println!("DBG: {:?}", graalvm_home);
+    println!("DBG: {:?}", tika_native_canonicalized);
 
     println!("Progress: building libtika");
     let status = Command::new(gradlew_bin)
