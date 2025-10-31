@@ -39,6 +39,6 @@ clean:
 	$(RM_CMD) -f $(RM_LIBS)
 	rm -rf pkg
 
-test: build
+test:
 	./pkg/extract-cli test/hello.pdf test/out
 	rm test/out
