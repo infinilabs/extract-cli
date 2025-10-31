@@ -40,5 +40,5 @@ clean:
 	rm -rf pkg
 
 test:
-	./pkg/extract-cli test/hello.pdf test/out
-	rm test/out
+	./pkg/extract-cli test_dir/hello.pdf test_dir/out
+	rm test_dir/out
