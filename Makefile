@@ -23,6 +23,8 @@ clean:
 	cd build_libtika && cargo clean
 	cargo clean
 	rm -rf pkg
+	rm -f libtika_native.lib # On needed on Windows
+
 
 test:
 	./pkg/extract-cli test_dir/hello.pdf test_dir/out
