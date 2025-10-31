@@ -33,6 +33,22 @@ cfg_if::cfg_if! {
         const LIBAWT_HEADLESS: &str = "libawt_headless.so";
         const LIBAWT_HEADLESS_PATH_UNDER_GRADLEW: &str =
             concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBAWT_HEADLESS);
+    } else if #[cfg(target_os = "windows")] {
+        const LIBTIKA_LIB: &str = "libtika_native.lib";
+        const LIBTIKA_LIB_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", LIBTIKA_LIB);
+
+        const AWT: &str = "awt.dll";
+        const AWT_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", AWT);
+
+        const JAVA: &str = "java.dll";
+        const LIBJAVA_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", JAVA);
+
+        const JVM: &str = "jvm.so";
+        const JVM_PATH_UNDER_GRADLEW: &str =
+            concatcp!(TIKA_NATIVE, "/build/native/nativeCompile/", JVM);
     }
 }
 
@@ -105,6 +121,13 @@ fn main() {
             std::fs::copy(LIBJVM_PATH_UNDER_GRADLEW, LIBJVM).unwrap();
             std::fs::copy(LIBAWT_PATH_UNDER_GRADLEW, LIBAWT).unwrap();
             std::fs::copy(LIBAWT_HEADLESS_PATH_UNDER_GRADLEW, LIBAWT_HEADLESS).unwrap();
+        } else if #[cfg(target_os = "windows")] {
+            std::fs::copy(JAVA_PATH_UNDER_GRADLEW, JAVA).unwrap();
+            std::fs::copy(JVM_PATH_UNDER_GRADLEW, JVM).unwrap();
+            std::fs::copy(AWT_PATH_UNDER_GRADLEW, AWT).unwrap();
+
+            // Linker needs this on MSVC
+            std::fs::copy(LIBTIKA_LIB_PATH_UNDER_GRADLEW, LIBTIKA_LIB).unwrap();
         }
     }
     println!("Progress: libraries moved");

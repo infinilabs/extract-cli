@@ -24,11 +24,15 @@ build:
 	cp target/release/extract-cli ./
 	# Packaging
 	mkdir pkg
-	mv extract-cli pkg/
 ifeq ($(UNAME_S),Darwin)
+	mv extract-cli pkg/
 	mv *.dylib pkg/
 else ifeq ($(UNAME_S),Linux)
+	mv extract-cli pkg/
 	mv *.so pkg/
+else ifeq ($(OS),Windows_NT)
+	mv extract-cli.exe pkg/
+	mv *.dll pkg
 endif
 
 clean:
