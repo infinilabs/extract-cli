@@ -79,10 +79,6 @@ fn main() {
     assert!(graalvm_home.exists());
     assert!(tika_native_canonicalized.exists());
 
-    println!("DBG: {:?}", gradlew_bin);
-    println!("DBG: {:?}", graalvm_home);
-    println!("DBG: {:?}", tika_native_canonicalized);
-
     println!("Progress: building libtika");
     let status = Command::new(gradlew_bin)
         .current_dir(tika_native_canonicalized)
