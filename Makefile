@@ -18,7 +18,7 @@ endif
 
 build:
 	cd build_libtika && cargo build
-	wget https://services.gradle.org/distributions/gradle-8.10-bin.zip
+	wget -nc https://services.gradle.org/distributions/gradle-8.10-bin.zip
 	./build_libtika/target/debug/build_libtika
 	cargo build --release
 	cp target/release/extract-cli ./
